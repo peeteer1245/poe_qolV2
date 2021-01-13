@@ -82,7 +82,7 @@ class stash_tab_item(dict):
         return self.__repr__()
 
     def __repr__(self):
-        return "{} : {} | {} | ilvl {} | ({},{})".format(self.json["typeLine"], self.json["name"], "identified" if self.is_identified else "NOT identified", self.json["ilvl"], self.json["x"], self.json["y"])
+        return "{} : {} | {} | {} | ilvl {} | ({},{})".format(self.json["typeLine"], self.json["name"], "identified" if self.is_identified else "NOT identified", "Rare" if self.is_rare else "NOT Rare", self.json["ilvl"], self.json["x"], self.json["y"])
 
 
 class stash_tab:
