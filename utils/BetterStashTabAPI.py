@@ -72,7 +72,7 @@ class stash_tab_item(dict):
     def __init__(self, json):
         self.json = json
         self.tags = stash_tab_item.parse_icon_url_into_tags(self.json["icon"])
-        self.is_unique = json["frameType"] == 3
+        self.is_rare = json["frameType"] == 2
         self.is_identified = self.json["identified"]
 
     def __getitem__(self, key):
@@ -120,7 +120,7 @@ class stash_tab:
                 self.tab_items.pop(i)
                 return
 
-    def retrieve_all_by_tag(self, tag, unique_only=False, identified_only=False):
+    def retrieve_all_by_tag(self, tag, only_rares=False, exclude_identified=False, exclude_unidentified=False):
         """
         Created by: 0xdavidel
 
@@ -129,10 +129,13 @@ class stash_tab:
         myList = []
         tag = tag.lower()
         for item in self.tab_items:
-            if unique_only:
-                if item.is_unique:
+            if only_rares:
+                if not item.is_rare:
                     continue
-            if identified_only:
+            if exclude_identified:
+                if item.is_identified:
+                    continue
+            if exclude_unidentified:
                 if not item.is_identified:
                     continue
             # The +"s" is because all the tags look like "rings", and its for ease of use if you forget to add "s" in the filter

@@ -394,59 +394,16 @@ class MyApplication(pygubu.TkApplication):
         self.debug_print("Synced stashtab")
 
     def get_stash_tab_chaos_recipe_items(self):
-        # Unidentified items
-        unidentified_helmets=self.latest_stash.retrieve_all_by_tag(
-            "helmets", unique_only=False, identified_only=False)
-        unidentified_bodyarmours=self.latest_stash.retrieve_all_by_tag(
-            "bodyarmours", unique_only=False, identified_only=False)
-        unidentified_boots=self.latest_stash.retrieve_all_by_tag(
-            "boots", unique_only=False, identified_only=False)
-        unidentified_gloves=self.latest_stash.retrieve_all_by_tag(
-            "gloves", unique_only=False, identified_only=False)
-        unidentified_amulets=self.latest_stash.retrieve_all_by_tag(
-            "amulets", unique_only=False, identified_only=False)
-        unidentified_rings=self.latest_stash.retrieve_all_by_tag(
-            "rings", unique_only=False, identified_only=False)
-        unidentified_belts=self.latest_stash.retrieve_all_by_tag(
-            "belts", unique_only=False, identified_only=False)
-        unidentified_onehanded_weapons=self.latest_stash.retrieve_all_by_tag(
-            "onehandweapons", unique_only=False, identified_only=False)
-
-        # Identified items
-        identified_helmets=self.latest_stash.retrieve_all_by_tag(
-            "helmets", unique_only=False, identified_only=True)
-        identified_bodyarmours=self.latest_stash.retrieve_all_by_tag(
-            "bodyarmours", unique_only=False, identified_only=True)
-        identified_boots=self.latest_stash.retrieve_all_by_tag(
-            "boots", unique_only=False, identified_only=True)
-        identified_gloves=self.latest_stash.retrieve_all_by_tag(
-            "gloves", unique_only=False, identified_only=True)
-        identified_amulets=self.latest_stash.retrieve_all_by_tag(
-            "amulets", unique_only=False, identified_only=True)
-        identified_rings=self.latest_stash.retrieve_all_by_tag(
-            "rings", unique_only=False, identified_only=True)
-        identified_belts=self.latest_stash.retrieve_all_by_tag(
-            "belts", unique_only=False, identified_only=True)
-        identified_onehanded_weapons=self.latest_stash.retrieve_all_by_tag(
-            "onehandweapons", unique_only=False, identified_only=True)
-
         chaos_recipe_items={}
-        chaos_recipe_items["Helmets"]={
-            "identified": identified_helmets, "unidentified": unidentified_helmets}
-        chaos_recipe_items["BodyArmours"]={
-            "identified": identified_bodyarmours, "unidentified": unidentified_bodyarmours}
-        chaos_recipe_items["Boots"]={
-            "identified": identified_boots, "unidentified": unidentified_boots}
-        chaos_recipe_items["Gloves"]={
-            "identified": identified_gloves, "unidentified": unidentified_gloves}
-        chaos_recipe_items["Amulets"]={
-            "identified": identified_amulets, "unidentified": unidentified_amulets}
-        chaos_recipe_items["Rings"]={
-            "identified": identified_rings, "unidentified": unidentified_rings}
-        chaos_recipe_items["Belts"]={
-            "identified": identified_belts, "unidentified": unidentified_belts}
-        chaos_recipe_items["OneHandWeapons"]={
-            "identified": identified_onehanded_weapons, "unidentified": unidentified_onehanded_weapons}
+
+        for item_type in self.item_details:
+            unidentified = self.latest_stash.retrieve_all_by_tag(
+                item_type.lower(), only_rares=True, exclude_identified=True)
+
+            identified = self.latest_stash.retrieve_all_by_tag(
+                item_type.lower(), only_rares=True, exclude_unidentified=True)
+
+            chaos_recipe_items[item_type] = {"identified": identified, "unidentified": unidentified}
 
         return chaos_recipe_items
 
@@ -732,7 +689,7 @@ class MyApplication(pygubu.TkApplication):
                     continue
 
                 all_unidentified_in_slot=self.stash_tab.retrieve_all_by_tag(
-                    slot, unique_only=False, identified_only=False)
+                    slot, only_rares=True)
 
                 # The amount of items of the current slot is larger or equal to the threshold, remove it from the filter
                 if len(all_unidentified_in_slot) >= slot_threshold:
