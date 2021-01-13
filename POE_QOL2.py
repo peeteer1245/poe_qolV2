@@ -294,7 +294,13 @@ class MyApplication(pygubu.TkApplication):
         else:
             return False
 
-    def chaos_recipe(self):
+    def chaos_recipe_idd(self):
+        self.chaos_recipe(identified=True)
+
+    def chaos_recipe_unidd(self):
+        self.chaos_recipe(identified=False)
+
+    def chaos_recipe(self, identified=False):
         """
         The meat of the program. Based on the number of complete sets, create top-level geometries that highlight areas of the screens for each item in the set.
         """
@@ -316,17 +322,15 @@ class MyApplication(pygubu.TkApplication):
         # Dict keys are the slot name and values are the normalized positions.
         # the positions are lists of length-2 lists:eg [[x0, y0], [x1, y1]]
 
-        sets = self.get_complete_sets(identified=False)
+        sets = self.get_complete_sets(identified=identified)
 
         # unident will be an empty dict if there's no complete sets left, and will inform user
         # TODO: This should work better
         if not sets:
-            self.debug_print("Not enough unidentified Chaos Recipe Items")
+            self.debug_print("Not enough Chaos Recipe Items")
             Msg.showinfo(title=MSG_BOX_TITLE, message="Not enough Chaos Recipe Items")
             return
-        self.debug_print(
-            "Found {} sets for the unidentified chaos recipe".format(len(sets))
-        )
+        self.debug_print("Found {} sets for the chaos recipe".format(len(sets)))
         # if we have sets, go into the highlighting logic
 
         label_item_order = self.config["Overlay"]["label_item_order"].lower() in [
@@ -447,17 +451,19 @@ class MyApplication(pygubu.TkApplication):
 
         chaos_recipe_items = self.get_stash_tab_chaos_recipe_items()
 
-        num_helmets = len(chaos_recipe_items["Helmets"]["unidentified"])
-        num_body_armors = len(chaos_recipe_items["BodyArmours"]["unidentified"])
-        num_boots = len(chaos_recipe_items["Boots"]["unidentified"])
-        num_gloves = len(chaos_recipe_items["Gloves"]["unidentified"])
-        num_amulets = len(chaos_recipe_items["Amulets"]["unidentified"])
+        identified_str = "identified" if identified else "unidentified"
+
+        num_helmets = len(chaos_recipe_items["Helmets"][identified_str])
+        num_body_armors = len(chaos_recipe_items["BodyArmours"][identified_str])
+        num_boots = len(chaos_recipe_items["Boots"][identified_str])
+        num_gloves = len(chaos_recipe_items["Gloves"][identified_str])
+        num_amulets = len(chaos_recipe_items["Amulets"][identified_str])
         # Faster math floor, ints round down automaticly
-        num_rings = int(len(chaos_recipe_items["Rings"]["unidentified"]) / 2)
-        num_belts = len(chaos_recipe_items["Belts"]["unidentified"])
-        num_weapons = int(len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) / 2)
-        num_weapons += int(len(chaos_recipe_items["Shields"]["unidentified"]) / 2)
-        num_weapons += len(chaos_recipe_items["TwoHandWeapons"]["unidentified"])
+        num_rings = int(len(chaos_recipe_items["Rings"][identified_str]) / 2)
+        num_belts = len(chaos_recipe_items["Belts"][identified_str])
+        num_weapons = int(len(chaos_recipe_items["OneHandWeapons"][identified_str]) / 2)
+        num_weapons += int(len(chaos_recipe_items["Shields"][identified_str]) / 2)
+        num_weapons += len(chaos_recipe_items["TwoHandWeapons"][identified_str])
 
         total_ready_sets = min(
             [
@@ -489,43 +495,43 @@ class MyApplication(pygubu.TkApplication):
         # Create the item sets
         for set_index in range(min(maximum_sets_to_show, total_ready_sets)):
             current_set = []
-            current_set.append(chaos_recipe_items["Helmets"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["BodyArmours"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["Boots"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["Gloves"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["Amulets"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["Belts"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["Rings"]["unidentified"].pop())
-            current_set.append(chaos_recipe_items["Rings"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Helmets"][identified_str].pop())
+            current_set.append(chaos_recipe_items["BodyArmours"][identified_str].pop())
+            current_set.append(chaos_recipe_items["Boots"][identified_str].pop())
+            current_set.append(chaos_recipe_items["Gloves"][identified_str].pop())
+            current_set.append(chaos_recipe_items["Amulets"][identified_str].pop())
+            current_set.append(chaos_recipe_items["Belts"][identified_str].pop())
+            current_set.append(chaos_recipe_items["Rings"][identified_str].pop())
+            current_set.append(chaos_recipe_items["Rings"][identified_str].pop())
 
             # 2x 1h weapons
-            if len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) >= 2:
+            if len(chaos_recipe_items["OneHandWeapons"][identified_str]) >= 2:
                 current_set.append(
-                    chaos_recipe_items["OneHandWeapons"]["unidentified"].pop()
+                    chaos_recipe_items["OneHandWeapons"][identified_str].pop()
                 )
                 current_set.append(
-                    chaos_recipe_items["OneHandWeapons"]["unidentified"].pop()
+                    chaos_recipe_items["OneHandWeapons"][identified_str].pop()
                 )
 
             # 1x 1h weapon + 1 shield
             elif (
-                len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) >= 1
-                and len(chaos_recipe_items["Shields"]["unidentified"]) >= 1
+                len(chaos_recipe_items["OneHandWeapons"][identified_str]) >= 1
+                and len(chaos_recipe_items["Shields"][identified_str]) >= 1
             ):
                 current_set.append(
-                    chaos_recipe_items["OneHandWeapons"]["unidentified"].pop()
+                    chaos_recipe_items["OneHandWeapons"][identified_str].pop()
                 )
-                current_set.append(chaos_recipe_items["Shields"]["unidentified"].pop())
+                current_set.append(chaos_recipe_items["Shields"][identified_str].pop())
 
             # 2x shield
             elif len(chaos_recipe_items["Shields"]["unidentified"]) >= 2:
-                current_set.append(chaos_recipe_items["Shields"]["unidentified"].pop())
-                current_set.append(chaos_recipe_items["Shields"]["unidentified"].pop())
+                current_set.append(chaos_recipe_items["Shields"][identified_str].pop())
+                current_set.append(chaos_recipe_items["Shields"][identified_str].pop())
 
             # 1x 2h weapon
-            elif len(chaos_recipe_items["TwoHandWeapons"]["unidentified"]) >= 1:
+            elif len(chaos_recipe_items["TwoHandWeapons"][identified_str]) >= 1:
                 current_set.append(
-                    chaos_recipe_items["TwoHandWeapons"]["unidentified"].pop()
+                    chaos_recipe_items["TwoHandWeapons"][identified_str].pop()
                 )
 
             # if we reach this, it means we fucked up in the addition stage earlier
@@ -635,8 +641,8 @@ class MyApplication(pygubu.TkApplication):
             unidentified_items = len(chaos_recipe_items[key]["unidentified"])
             if key == "OneHandWeapons":
                 self.overlay_builder.get_object(key).configure(
-                    text="Weapons:\n{} UID | {} ID".format(
-                        unidentified_items, identified_items
+                    text="{}:\n{} UID | {} ID".format(
+                        "Weapons", unidentified_items, identified_items
                     )
                 )
             else:
