@@ -171,11 +171,14 @@ class MyApplication(pygubu.TkApplication):
         #   The botom of the UI is at 1057/1440
         # from those conculsions its possible to calculate the top-left corner of the UI and the botop-right corner of the UI
         # Those two points represent the area of the Stash tab UI
+        horizontal_offset = int(self.config['Overlay']['horizontal_offset'])
+        vertical_offset = int(self.config['Overlay']['vertical_offset'])
 
-        self.tab_origin=22/1440 * \
-            self.screen_res[1], 215/1440 * self.screen_res[1]
-        self.tab_end=864/1440 * \
-            self.screen_res[1], 1057/1440 * self.screen_res[1]
+        self.tab_origin = 22/1440 * self.screen_res[1] + horizontal_offset, \
+                            215/1440 * self.screen_res[1] - vertical_offset
+
+        self.tab_end = 864/1440 * self.screen_res[1] + horizontal_offset, \
+                            1057/1440 * self.screen_res[1] - vertical_offset
 
         # scale the size of a stash tab box depending on if it is quad or not.
         # TODO: currently set by user, but can actually get this from the site request
@@ -535,7 +538,8 @@ class MyApplication(pygubu.TkApplication):
         self.overlay_GUI.overrideredirect(1)
 
         # I went ahead and put this at bottom center
-        overlay_location=f'+{self.screen_res[0] // 2 - 130}+{floor(self.screen_res[1] * (1 - 80/1080))}'
+        vertical_offset = int(self.config['Overlay']['item_counter_overlay_vertical_offset'])
+        overlay_location=f'+{self.screen_res[0] // 2 - 130}+{floor(self.screen_res[1] * (1 - 80/1080)) - vertical_offset}'
         self.overlay_GUI.geometry(overlay_location)
         self.overlay_GUI._offsetx=260
         self.overlay_GUI._offsety=80
