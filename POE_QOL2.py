@@ -24,7 +24,7 @@ import threading
 # 0xdavidel - I hate hardcoded strings, using constants is the better way to make your code maintanable
 CHAOS_RECIPE_SECTION_NAME = "Chaos recipe"
 DEBUG_LOG_PATH = 'poeqol2_logfile.txt'
-CONFIG_PATH = 'Setup.ini'
+CONFIG_PATH = 'Config.ini'
 GUI_FILE_PATH = r'ui/Gui_Button_V2.ui'
 MAIN_GUI_FRAME_NAME = 'Frame_1'
 RESOURCES_FOLDER = 'resources'
@@ -246,7 +246,7 @@ class MyApplication(pygubu.TkApplication):
         # Update the filter
         self.update_filter()
 
-        # check if the local and remote inventories are synchronized. Uses the refresh rate (in seconds) set in the Setup.ini file.
+        # check if the local and remote inventories are synchronized. Uses the refresh rate (in seconds) set in the Config.ini file.
         # I don't know the actual refresh rate of the website; seems random.
         # Probably fine to assume that the local record is most accurate for 60s since it should take about that long to vendor everything.
         # Can't remember why I do this here, but it doesn't hurt anything (lol only one day later and I can't remember yikes)
@@ -660,14 +660,14 @@ class MyApplication(pygubu.TkApplication):
             # we are now just going to update the setup file with what the user says to avoid errors in the future
             # config_file_updates = {'filter': {
             #     'path': self.main_filter_path, 'lino': None, 'field': 'filter='}}
-            # with open('Setup.ini', 'r', encoding='utf-8') as configfile_in:
+            # with open('Config.ini', 'r', encoding='utf-8') as configfile_in:
             #     contents0 = configfile_in.readlines()
             #     for lino, l in enumerate(contents0):
             #         if l[0:7] == 'filter=':
             #             config_file_updates['filter']['lino'] = lino
             #         else:
             #             continue
-            # with open('Setup.ini', 'w', encoding='utf-8') as configfile_out:
+            # with open('Config.ini', 'w', encoding='utf-8') as configfile_out:
             #     contents0[config_file_updates['filter']['lino']] = config_file_updates['filter']['field'] + \
             #         config_file_updates['filter']['path'] + \
             #         "\n"  # encode it at utf-8 for international players
@@ -689,7 +689,7 @@ class MyApplication(pygubu.TkApplication):
         Attempt to update the main filter with showing/hiding recipe item slots that have reached the threshold.
         It is inefficient, since it loops through a very large filter blade file, and re-writes text that should not change.
         I re-insert all the text from the chaos_items_filter just to be safe, but wouldn't need to if this is implemented in a better way.
-        This will not hide any items set to be ignored in the Setup.ini file.
+        This will not hide any items set to be ignored in the Config.ini file.
         """
         self.debug_print("Updating Filter")
 
