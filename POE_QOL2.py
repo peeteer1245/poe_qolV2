@@ -24,8 +24,8 @@ import threading
 # 0xdavidel - I hate hardcoded strings, using constants is the better way to make your code maintanable
 CHAOS_RECIPE_SECTION_NAME = "Chaos recipe"
 DEBUG_LOG_PATH = 'poeqol2_logfile.txt'
-CONFIG_PATH = 'setup.ini'
-GUI_FILE_PATH = r'ui\Gui_Button_V2.ui'
+CONFIG_PATH = 'Setup.ini'
+GUI_FILE_PATH = r'ui/Gui_Button_V2.ui'
 MAIN_GUI_FRAME_NAME = 'Frame_1'
 RESOURCES_FOLDER = 'resources'
 SYNC_TRY_RATE = 10
@@ -286,7 +286,7 @@ class MyApplication(pygubu.TkApplication):
         # TODO: Make it so that the item is removed from local inventor ONLY if the user clicks on the highlight box. I am sure someone will click it without actually removing the item and it will not be recognize and user will complain.
         # This one is possibly fixed already by the sync thread - 0xdavidel 26.09.2020
         # TODO: HIGH Priority:  figure out why sometimes the same initial areas are highlighted. I may have fixed this by checking the inventory sync (and for left over highlights) first thing
-        
+
         # if any previous highlights still exist, destroy them.
         # If we don't do this, the way it is written below, if user doesn't manually click each highlight, they become non-interactive.
         # So, just killing everything is the fast and dirty way I decided wipe the screen clear if needed.
@@ -526,7 +526,7 @@ class MyApplication(pygubu.TkApplication):
         It also relies on some html file that comes with this code (or ccs? idk some web language)
         """
         self.overlay_builder=pygubu.Builder()
-        self.overlay_builder.add_from_file(r'ui\Gui_Button_V2.ui')
+        self.overlay_builder.add_from_file(GUI_FILE_PATH)
         self.overlay_GUI=tk.Toplevel(self.mainwindow)
 
         self.frame3=self.overlay_builder.get_object(
@@ -632,7 +632,7 @@ class MyApplication(pygubu.TkApplication):
             self.chaos_filter_parsed=load_rules_from_base_filter(
                 chaos_filter_path)
         except Exception as e:
-            debug_print("Exception reading chaos filter: {}".format(str(e)))
+            self.debug_print("Exception reading chaos filter: {}".format(str(e)))
             Msg.showinfo('POE QoL error',
                          "Exception reading chaos filter: {}".format(str(e)))
             sys.exit(1)
