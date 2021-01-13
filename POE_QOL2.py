@@ -317,6 +317,8 @@ class MyApplication(pygubu.TkApplication):
             'Found {} sets for the unidentified chaos recipe'.format(len(sets)))
         # if we have sets, go into the highlighting logic
 
+        label_item_order = self.config['Overlay']['label_item_order'].lower() in ['true', 'y', 'yes', 'positive', 'chaos']
+
         # loop through each item slot (key)
         for item_set in sets:
             self.debug_print('Current set to show : {}'.format(item_set))
@@ -346,6 +348,11 @@ class MyApplication(pygubu.TkApplication):
                 highlight.attributes("-alpha", 0.65)
                 if "color" in dir(item):
                     highlight.config(background=item.color)
+                    if label_item_order:
+                        label = tk.Label(highlight, text=item.priority)
+                        label.config(background=item.color)
+                        label.config(font=("", 15))
+                        label.pack()
                 else:
                     highlight.config(background="#FFFFFF")
                 highlight.overrideredirect(1)
@@ -516,6 +523,7 @@ class MyApplication(pygubu.TkApplication):
                     for detail_key in self.item_details:
                         if tag.lower() == detail_key.lower():
                             item.color=self.item_details[detail_key][2]
+                            item.priority=self.item_details[detail_key][3]
 
             sets.append(current_set)
         return sets
