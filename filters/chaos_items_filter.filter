@@ -54,10 +54,8 @@ ItemLevel >= 60
 Rarity = Rare
 SetTextColor 0 0 0
 SetBackgroundColor 187 187 187
-Class "Daggers" "One Hand Axes" "One Hand Maces" "One Hand Swords" "Rune Daggers" "Sceptres" "Thrusting One Hand Swords" "Wands"
+Class "Daggers" "One Hand Axes" "One Hand Maces" "One Hand Swords" "Rune Daggers" "Sceptres" "Thrusting One Hand Swords" "Wands" "Bows" "Staves" "Two Hand Swords" "Two Hand Axes" "Two Hand Maces" "Shields" "Warstaves"
 ItemLevel <= 74
-Width = 1
-Height <= 3
 Identified False
 
 # RULE Rings

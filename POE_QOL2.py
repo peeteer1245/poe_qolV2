@@ -216,6 +216,8 @@ class MyApplication(pygubu.TkApplication):
         self.item_details=dict(
             Rings=[1, 1, '#33bbee', '4', threshold*2],
             OneHandWeapons=[1, 3, '#bbbbbb', '1', threshold*2],
+            TwoHandWeapons=[2, 4, '#bbbbbb', '1', threshold],
+            Shields=[2, 2, '#bbbbbb', '2', threshold*2],
             BodyArmours=[2, 3, '#ee3377', '1', threshold],
             Helmets=[2, 2, '#cc3311', '2', threshold],
             Gloves=[2, 2, '#ee7733', '2', threshold],
@@ -426,8 +428,9 @@ class MyApplication(pygubu.TkApplication):
         # Faster math floor, ints round down automaticly
         num_rings=int(len(chaos_recipe_items["Rings"]["unidentified"]) / 2)
         num_belts=len(chaos_recipe_items["Belts"]["unidentified"])
-        num_weapons=int(
-            len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) / 2)
+        num_weapons=int(len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) / 2)
+        num_weapons+=int(len(chaos_recipe_items["Shields"]["unidentified"]) / 2)
+        num_weapons+=len(chaos_recipe_items["TwoHandWeapons"]["unidentified"])
 
         total_ready_sets=min([num_helmets, num_body_armors, num_boots,
                                 num_gloves, num_amulets, num_rings, num_belts, num_weapons])
@@ -449,28 +452,38 @@ class MyApplication(pygubu.TkApplication):
         # Create the item sets
         for set_index in range(min(maximum_sets_to_show, total_ready_sets)):
             current_set=[]
-            current_set.append(
-                chaos_recipe_items["Helmets"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["BodyArmours"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["Boots"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["Gloves"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["Amulets"]["unidentified"].pop())
-            # 2 rings
-            current_set.append(
-                chaos_recipe_items["Rings"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["Rings"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["Belts"]["unidentified"].pop())
-            # 2 onehanded weapons
-            current_set.append(
-                chaos_recipe_items["OneHandWeapons"]["unidentified"].pop())
-            current_set.append(
-                chaos_recipe_items["OneHandWeapons"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Helmets"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["BodyArmours"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Boots"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Gloves"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Amulets"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Belts"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Rings"]["unidentified"].pop())
+            current_set.append(chaos_recipe_items["Rings"]["unidentified"].pop())
+
+            # 2x 1h weapons
+            if len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) >= 2:
+                current_set.append(chaos_recipe_items["OneHandWeapons"]["unidentified"].pop())
+                current_set.append(chaos_recipe_items["OneHandWeapons"]["unidentified"].pop())
+
+            # 1x 1h weapon + 1 shield
+            elif len(chaos_recipe_items["OneHandWeapons"]["unidentified"]) >= 1 \
+                    and len(chaos_recipe_items["Shields"]["unidentified"]) >= 1:
+                current_set.append(chaos_recipe_items["OneHandWeapons"]["unidentified"].pop())
+                current_set.append(chaos_recipe_items["Shields"]["unidentified"].pop())
+
+            # 2x shield
+            elif len(chaos_recipe_items["Shields"]["unidentified"]) >= 2:
+                current_set.append(chaos_recipe_items["Shields"]["unidentified"].pop())
+                current_set.append(chaos_recipe_items["Shields"]["unidentified"].pop())
+
+            # 1x 2h weapon
+            elif len(chaos_recipe_items["TwoHandWeapons"]["unidentified"]) >= 1:
+                current_set.append(chaos_recipe_items["TwoHandWeapons"]["unidentified"].pop())
+
+            # if we reach this, it means we fucked up in the addition stage earlier
+            else:
+                raise RuntimeError("unintended elif branch reached")
 
             # delete the selected items from the local stash variable
             for item in current_set:
@@ -558,11 +571,23 @@ class MyApplication(pygubu.TkApplication):
         self.debug_print("Refreshing filter within refresh me.")
 
         chaos_recipe_items=self.get_stash_tab_chaos_recipe_items()
+
+        # summarizing 2h- and 1h-weapons + shields as 1h-weapons
+        for key in ["TwoHandWeapons", "Shields"]:
+            chaos_recipe_items["OneHandWeapons"]["identified"] += chaos_recipe_items[key]["identified"]
+            chaos_recipe_items["OneHandWeapons"]["unidentified"] += chaos_recipe_items[key]["identified"]
+            del chaos_recipe_items[key]
+
+
         for key in chaos_recipe_items:
             identified_items=len(chaos_recipe_items[key]["identified"])
             unidentified_items=len(chaos_recipe_items[key]["unidentified"])
-            self.overlay_builder.get_object(key).configure(
-                text="{}:\n{} UID | {} ID".format(key, unidentified_items, identified_items))
+            if key == "OneHandWeapons":
+                self.overlay_builder.get_object(key).configure(
+                    text="Weapons:\n{} UID | {} ID".format(unidentified_items, identified_items))
+            else:
+                self.overlay_builder.get_object(key).configure(
+                    text="{}:\n{} UID | {} ID".format(key, unidentified_items, identified_items))
 
         self.update_filter()
 
