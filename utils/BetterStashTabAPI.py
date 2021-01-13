@@ -62,8 +62,7 @@ class stash_tab_item(dict):
 
         Both cases the "tags" of the item are stored as directories in the URL path and thats what I am extracting
         """
-        tmp = url.replace(
-            r"https://web.poecdn.com/image/Art/2DItems/", "")
+        tmp = url.replace(r"https://web.poecdn.com/image/Art/2DItems/", "")
         tmp = tmp.split("/")
         tmp = tmp[:-1]
         # Lower for ease of use
@@ -82,7 +81,15 @@ class stash_tab_item(dict):
         return self.__repr__()
 
     def __repr__(self):
-        return "{} : {} | {} | {} | ilvl {} | ({},{})".format(self.json["typeLine"], self.json["name"], "identified" if self.is_identified else "NOT identified", "Rare" if self.is_rare else "NOT Rare", self.json["ilvl"], self.json["x"], self.json["y"])
+        return "{} : {} | {} | {} | ilvl {} | ({},{})".format(
+            self.json["typeLine"],
+            self.json["name"],
+            "identified" if self.is_identified else "NOT identified",
+            "Rare" if self.is_rare else "NOT Rare",
+            self.json["ilvl"],
+            self.json["x"],
+            self.json["y"],
+        )
 
 
 class stash_tab:
@@ -101,7 +108,9 @@ class stash_tab:
         self.isQuadTab = False
         self.index = None
         self.tab_data = tab_data
-        self.isQuadTab = self.tab_data["quadLayout"] if "quadLayout" in self.tab_data else False
+        self.isQuadTab = (
+            self.tab_data["quadLayout"] if "quadLayout" in self.tab_data else False
+        )
         self.index = index
 
         for item_data in self.tab_data["items"]:
@@ -120,7 +129,13 @@ class stash_tab:
                 self.tab_items.pop(i)
                 return
 
-    def retrieve_all_by_tag(self, tag, only_rares=False, exclude_identified=False, exclude_unidentified=False):
+    def retrieve_all_by_tag(
+        self,
+        tag,
+        only_rares=False,
+        exclude_identified=False,
+        exclude_unidentified=False,
+    ):
         """
         Created by: 0xdavidel
 
@@ -139,7 +154,7 @@ class stash_tab:
                 if not item.is_identified:
                     continue
             # The +"s" is because all the tags look like "rings", and its for ease of use if you forget to add "s" in the filter
-            if tag in item.tags or tag+"s" in item.tags:
+            if tag in item.tags or tag + "s" in item.tags:
                 myList.append(item)
         return myList
 
@@ -154,7 +169,9 @@ class stash_tab:
         for item in self.tab_items:
             items.append(str(item))
 
-        return "TAB INDEX: {} | isQuad: {} | items : {}".format(self.index, self.isQuadTab, json.dumps(items))
+        return "TAB INDEX: {} | isQuad: {} | items : {}".format(
+            self.index, self.isQuadTab, json.dumps(items)
+        )
 
 
 def get_stash_tab_content(accountName, league, tabIndex, POESESSID=None, DEBUG=False):
@@ -164,14 +181,14 @@ def get_stash_tab_content(accountName, league, tabIndex, POESESSID=None, DEBUG=F
     Retrieve a stash_tab object representing a single stash tab
     """
     # Create the request URL
-    formatted_stash_tab_url = STASH_TAB_URL.format(
-        league, tabIndex, accountName)
+    formatted_stash_tab_url = STASH_TAB_URL.format(league, tabIndex, accountName)
     # COOKIEEESSSS YUMMY
     cookies_dict = {"POESESSID": POESESSID}
     # Do the request
     try:
         stash_tab_content_request = requests.get(
-            formatted_stash_tab_url, cookies=cookies_dict)
+            formatted_stash_tab_url, cookies=cookies_dict
+        )
     except:
         # Yes I am aware that capturing ALL exceptions is not the best practice
         raise Exception("Unable to connect to pathofexile.com")
@@ -182,7 +199,8 @@ def get_stash_tab_content(accountName, league, tabIndex, POESESSID=None, DEBUG=F
         tab_content_json = json.loads(text_json)
     except:
         raise Exception(
-            "Unable to parse result (is path of exile down for maintenance?)")
+            "Unable to parse result (is path of exile down for maintenance?)"
+        )
 
     # Error handeling
     if "error" in tab_content_json:
@@ -191,26 +209,33 @@ def get_stash_tab_content(accountName, league, tabIndex, POESESSID=None, DEBUG=F
         # Handle POESESSID error
         if msg == "Forbidden":
             raise Exception(
-                "Error retrieving stash tab content\nPlease check that your entered the correct POESESSID")
+                "Error retrieving stash tab content\nPlease check that your entered the correct POESESSID"
+            )
 
         # Handle Account name error
-        if msg == 'Resource not found':
+        if msg == "Resource not found":
             raise Exception(
-                "Error retrieving stash tab content\nPlease check that your entered the correct Account name")
+                "Error retrieving stash tab content\nPlease check that your entered the correct Account name"
+            )
 
         # Handle League name error
-        if msg == 'Invalid query' and code == 2:
+        if msg == "Invalid query" and code == 2:
             raise Exception(
-                "Error retrieving stash tab content\nPlease check that your entered the correct League name")
+                "Error retrieving stash tab content\nPlease check that your entered the correct League name"
+            )
 
         # Handle Tab index error
-        if msg == 'Invalid query' and code == 1:
+        if msg == "Invalid query" and code == 1:
             raise Exception(
-                "Error retrieving stash tab content\nPlease check that your entered the correct tab index")
+                "Error retrieving stash tab content\nPlease check that your entered the correct tab index"
+            )
         # Well damm, didnt see this error yet
         raise Exception(
-            "Error retrieving stash tab content\nNever saw this exception:\n{}".format(tab_content_json))
-    
+            "Error retrieving stash tab content\nNever saw this exception:\n{}".format(
+                tab_content_json
+            )
+        )
+
     # New stash tab object
     my_stash_tab = stash_tab(tab_content_json, tabIndex)
 

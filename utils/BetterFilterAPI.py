@@ -36,7 +36,7 @@ def get_filter_path(path):
     """
     Created by: 0xdavidel
 
-    Get the absolute filter path, if the path inputted is absolute then it will return it back - meaning you can pass custom full paths 
+    Get the absolute filter path, if the path inputted is absolute then it will return it back - meaning you can pass custom full paths
     """
 
     filter_directory = get_filter_directory()
@@ -92,8 +92,7 @@ def extract_section(data, section_name):
     # bool that is set to true will equal to the value of 1
     # Bad format, header and footer should either exist together or not at all
     if is_header_present + is_footer_present == 1:
-        raise Exception(
-            "Bad filter format, either the header or the footer is missing")
+        raise Exception("Bad filter format, either the header or the footer is missing")
 
     # No section present, return and empty filter representation
     if not is_header_present and not is_footer_present:
@@ -105,13 +104,16 @@ def extract_section(data, section_name):
 
     # Split the data to extract the section
     try:
-        section = data[header_position:footer_position + len(section_footer)]
+        section = data[header_position : footer_position + len(section_footer)]
     except:
-        raise Exception("Error extracting the target section [{} : {}]".format(
-            header_position, footer_position))
+        raise Exception(
+            "Error extracting the target section [{} : {}]".format(
+                header_position, footer_position
+            )
+        )
 
     # Trim the section header and footer (Yes I know it could have been done at the prevous step, this is written explisitly for ease of maintanace)
-    section = section[len(section_header): - len(section_footer)]
+    section = section[len(section_header) : -len(section_footer)]
     return header_position, footer_position, section
 
 
@@ -134,7 +136,7 @@ def parse_section(section_data):
         # Rule name is at the first line
         rule_name = rule.split("\n")[0]
         # Content is in the rest
-        rule_content = rule[len(rule_name)+1:]
+        rule_content = rule[len(rule_name) + 1 :]
 
         # Remove excess whitespace
         rule_name = rule_name.strip()
@@ -159,7 +161,8 @@ def load_section_from_filter(filter_path, section_name):
     filter_path = read_file(filter_path)
     # Extract our section from the filter
     section_start, section_end, section_data = extract_section(
-        filter_path, section_name)
+        filter_path, section_name
+    )
 
     # Time to parse the rules into a dictionary
     section_rules = parse_section(section_data)
@@ -203,7 +206,8 @@ def write_section_to_filter(filter_path, section_name, section_rules):
     filter_data = read_file(filter_path)
 
     section_start, section_end, section_data = extract_section(
-        filter_data, section_name)
+        filter_data, section_name
+    )
 
     section_rules_string = stringify_section_rules(section_rules)
 
@@ -212,7 +216,10 @@ def write_section_to_filter(filter_path, section_name, section_rules):
 
     section_string = section_header + section_rules_string + section_footer
 
-    new_filter_data = filter_data[:section_start] + \
-        section_string + filter_data[section_end + len(section_footer):]
+    new_filter_data = (
+        filter_data[:section_start]
+        + section_string
+        + filter_data[section_end + len(section_footer) :]
+    )
 
     write_file(filter_path, new_filter_data)
