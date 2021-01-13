@@ -839,49 +839,49 @@ class MyApplication(pygubu.TkApplication):
         pyautogui.hotkey("ctrl", "v")
 
     def currency(self):
-        self.search('"currency"')
+        self.search('"Rarity: Currency"')
 
     def essence(self):
-        self.search('"essence of"')
+        self.search('"Essence of" "Rarity: Currency"')
 
     def divcard(self):
-        self.search('"divination"')
+        self.search('"Rarity: Divination Card"')
 
     def fragment(self):
         self.search('"can be used in a personal Map device"')
 
     def splinter(self):
-        self.search('"splinter"')
+        self.search('"Splinter" "Splinters to create"')
 
     def delve(self):
-        self.search('"fossil"')
+        self.search('"Rarity: Currency" "Fossil"')
 
     def incubator(self):
-        self.search('"incubator"')
+        self.search('"The Incubated item drops"')
 
     def map(self):
-        self.search('"map""tier"')
+        self.search('"Map" "personal Map Device"')
 
     def blight_map(self):
-        self.search('"blighted" "tier"')
+        self.search('"Blighted" "personal Map Device"')
 
     def veiled(self):
-        self.search('"veiled"')
+        self.search('"Veiled"')
 
     def rare(self):
-        self.search('"rare"')
+        self.search('"Rarity: Rare"')
 
     def unique(self):
-        self.search('"unique"')
+        self.search('"Rarity: Unique"')
 
     def prophecy(self):
-        self.search('"prophecy"')
+        self.search('"add this prophecy"')
 
     def gem(self):
-        self.search('"gem"')
+        self.search('"Rarity: Gem"')
 
     def unid(self):
-        self.search('"unid"')
+        self.search('"Unidentified"')
 
 
 if __name__ == "__main__":
