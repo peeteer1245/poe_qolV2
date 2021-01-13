@@ -144,7 +144,7 @@ class MyApplication(pygubu.TkApplication):
 
         # TODO: Extract the screen resolution code into a function
         # Handeling the upper case "X" situation using .lower
-        raw_screen_res=self.config['Config']['screen_res'].lower()
+        raw_screen_res=self.config['Overlay']['screen_res'].lower()
         if "x" not in raw_screen_res:
             raise ValueError(
                 'Screen Resolution was not given correctly. Please use the "WIDTH x HIGHT" fromat')
@@ -179,7 +179,7 @@ class MyApplication(pygubu.TkApplication):
 
         # scale the size of a stash tab box depending on if it is quad or not.
         # TODO: currently set by user, but can actually get this from the site request
-        if self.config['Config']['quad_tab'].lower() == 'true':
+        if self.config['Stash']['quad_tab'].lower() == 'true':
             box_density_scalar=24
         else:
             box_density_scalar=12
@@ -191,7 +191,7 @@ class MyApplication(pygubu.TkApplication):
             self.tab_end[1] - self.tab_origin[1]) / (box_density_scalar)
 
         try:
-            threshold=int(self.config['Config']['threshold'])
+            threshold=int(self.config['Overlay']['threshold'])
         except:
             raise ValueError(
                 'Error parsing Threshold, it should be an intiger')
@@ -364,7 +364,7 @@ class MyApplication(pygubu.TkApplication):
         # we need to have this here since it is reset by the next call to self.stash_finder()
         t_previous_check=self.last_update
 
-        refresh_time=self.config['Config']['refresh_time']
+        refresh_time=self.config['Stash']['refresh_time']
         refresh_time_datetime_format=datetime.timedelta(
             seconds=float(refresh_time))
         # compare local and remote stash inventories. short circuits if the refresh time has not elapsed
@@ -470,7 +470,7 @@ class MyApplication(pygubu.TkApplication):
 
         try:
             maximum_sets_to_show=int(
-                self.config['Config']['highlight_max_num_sets'])
+                self.config['Overlay']['highlight_max_num_sets'])
         except:
             self.debug_print(
                 "Config error, highlight_max_num_sets is not a number")
@@ -600,10 +600,10 @@ class MyApplication(pygubu.TkApplication):
     def stash_finder(self):
         from utils.BetterStashTabAPI import get_stash_tab_content
 
-        league=self.config['Config']['league']
-        tab_index=self.config['Config']['tab']
-        account_name=self.config['Config']['account']
-        POESESSSID=self.config['Config']['POESESSID']
+        account_name=self.config['Account']['account']
+        league=self.config['Account']['league']
+        POESESSSID=self.config['Account']['POESESSID']
+        tab_index=self.config['Stash']['tab']
 
         self.debug_print("Pulling stash tab from pathofexile.com")
         self.debug_print("Account Name: {} | League: {} | Tab Index: {} | POESESSID (DO NOT SHARE THIS VALUE!): {}".format(
@@ -626,7 +626,7 @@ class MyApplication(pygubu.TkApplication):
     # Re-Implemented using BetterFilterAPI - 0xdavid - 25.09.2020
     def read_default_chaos_filter_sections(self):
         from utils.BetterFilterAPI import load_rules_from_base_filter
-        chaos_filter_path=self.config['Config']['chaos_items_filter']
+        chaos_filter_path=self.config['Filter']['chaos_items_filter']
 
         try:
             self.chaos_filter_parsed=load_rules_from_base_filter(
@@ -642,7 +642,7 @@ class MyApplication(pygubu.TkApplication):
     def pre_process_item_filter(self):
         from utils.BetterFilterAPI import get_filter_path, get_filter_directory
         # Get the absolute filter path,
-        main_filter_path=get_filter_path(self.config['Config']['filter'])
+        main_filter_path=get_filter_path(self.config['Filter']['filter'])
 
         filter_exists=os.path.isfile(main_filter_path)
 
@@ -707,7 +707,7 @@ class MyApplication(pygubu.TkApplication):
             Msg.showinfo(
                 'POE QoL error', "Something went very wrong while updating the filter")
             sys.exit(1)
-        ignore_threshold_list=self.config['Config']['ignore_threshold']
+        ignore_threshold_list=self.config['Overlay']['ignore_threshold']
         # Copy of the full chaos filter, remove entries from here as we go through the different slots
         temp_chaos_filter=copy.copy(self.chaos_filter_parsed)
         # go through the item slots and their meta-data (which has the threshold for items set by user)
