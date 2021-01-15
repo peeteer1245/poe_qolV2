@@ -71,8 +71,9 @@ class stash_tab_item(dict):
     def __init__(self, json):
         self.json = json
         self.tags = stash_tab_item.parse_icon_url_into_tags(self.json["icon"])
-        self.is_rare = json["frameType"] == 2
+        self.is_rare = self.json["frameType"] == 2
         self.is_identified = self.json["identified"]
+        self.ilvl = self.json["ilvl"]
 
     def __getitem__(self, key):
         return self.json[key]
@@ -135,6 +136,8 @@ class stash_tab:
         only_rares=False,
         exclude_identified=False,
         exclude_unidentified=False,
+        min_ilvl=0,
+        max_ilvl=100,
     ):
         """
         Created by: 0xdavidel
@@ -154,8 +157,9 @@ class stash_tab:
                 if not item.is_identified:
                     continue
             # The +"s" is because all the tags look like "rings", and its for ease of use if you forget to add "s" in the filter
-            if tag in item.tags or tag + "s" in item.tags:
-                myList.append(item)
+            if min_ilvl < item.ilvl < max_ilvl:
+                if tag in item.tags or tag + "s" in item.tags:
+                    myList.append(item)
         return myList
 
     def count(self):

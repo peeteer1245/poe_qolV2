@@ -427,11 +427,17 @@ class MyApplication(pygubu.TkApplication):
 
         for item_type in self.item_details:
             unidentified = self.latest_stash.retrieve_all_by_tag(
-                item_type.lower(), only_rares=True, exclude_identified=True
+                item_type.lower(),
+                only_rares=True,
+                exclude_identified=True,
+                min_ilvl=60,
             )
 
             identified = self.latest_stash.retrieve_all_by_tag(
-                item_type.lower(), only_rares=True, exclude_unidentified=True
+                item_type.lower(),
+                only_rares=True,
+                exclude_unidentified=True,
+                min_ilvl=60,
             )
 
             chaos_recipe_items[item_type] = {
@@ -444,6 +450,7 @@ class MyApplication(pygubu.TkApplication):
     def get_complete_sets(self, identified=False):
         """
         Re implemented using BetterStashTabAPI - 0xdavidel 25.09.2020
+        TODO: make shure there is always a ilvl 60 - 74 item included due to regal recipe
         """
         # If the local inventory and the last snapshot are not sync'd, update the remote snap shot and also make it the latest local stash inventory
         if not self.check_inventory_sync():
