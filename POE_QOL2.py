@@ -227,6 +227,7 @@ class MyApplication(pygubu.TkApplication):
             Rings=[1, 1, "#33bbee", "4", threshold * 2],
             OneHandWeapons=[1, 3, "#bbbbbb", "1", threshold * 2],
             TwoHandWeapons=[2, 4, "#bbbbbb", "1", threshold],
+            Bows=[2, 4, "#bbbbbb", "1", threshold],
             Shields=[2, 2, "#bbbbbb", "2", threshold * 2],
             BodyArmours=[2, 3, "#ee3377", "1", threshold],
             Helmets=[2, 2, "#cc3311", "2", threshold],
@@ -473,6 +474,7 @@ class MyApplication(pygubu.TkApplication):
         num_weapons = int(len(chaos_recipe_items["OneHandWeapons"][identified_str]) / 2)
         num_weapons += int(len(chaos_recipe_items["Shields"][identified_str]) / 2)
         num_weapons += len(chaos_recipe_items["TwoHandWeapons"][identified_str])
+        num_weapons += len(chaos_recipe_items["Bows"][identified_str])
 
         total_ready_sets = min(
             [
@@ -542,6 +544,10 @@ class MyApplication(pygubu.TkApplication):
                 current_set.append(
                     chaos_recipe_items["TwoHandWeapons"][identified_str].pop()
                 )
+
+            # 1x 2h weapon
+            elif len(chaos_recipe_items["Bows"][identified_str]) >= 1:
+                current_set.append(chaos_recipe_items["Bows"][identified_str].pop())
 
             # if we reach this, it means we fucked up in the addition stage earlier
             else:
@@ -636,7 +642,7 @@ class MyApplication(pygubu.TkApplication):
         chaos_recipe_items = self.get_stash_tab_chaos_recipe_items()
 
         # summarizing 2h- and 1h-weapons + shields as 1h-weapons
-        for key in ["TwoHandWeapons", "Shields"]:
+        for key in ["TwoHandWeapons", "Shields", "Bows"]:
             chaos_recipe_items["OneHandWeapons"]["identified"] += chaos_recipe_items[
                 key
             ]["identified"]
