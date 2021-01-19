@@ -5,6 +5,12 @@ import re
 # URL Format to access a specific stash tab information
 STASH_TAB_URL = "https://www.pathofexile.com/character-window/get-stash-items?league={}&tabIndex={}&accountName={}"
 
+# the api blocks the requests user agent so we need to fake it
+# a old IE user agent is used for the lulz
+HEADERS = {
+    "User-Agent": "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)",
+}
+
 
 class stash_tab_item(dict):
     """
@@ -191,16 +197,14 @@ def get_stash_tab_content(accountName, league, tabIndex, POESESSID=None, DEBUG=F
     # Do the request
     try:
         stash_tab_content_request = requests.get(
-            formatted_stash_tab_url, cookies=cookies_dict
+            formatted_stash_tab_url, cookies=cookies_dict, headers=HEADERS
         )
     except:
         # Yes I am aware that capturing ALL exceptions is not the best practice
         raise Exception("Unable to connect to pathofexile.com")
 
     try:
-        # Jsonify the whole ting
-        text_json = stash_tab_content_request.text
-        tab_content_json = json.loads(text_json)
+        tab_content_json = stash_tab_content_request.json()
     except:
         raise Exception(
             "Unable to parse result (is path of exile down for maintenance?)"
