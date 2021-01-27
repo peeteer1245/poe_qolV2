@@ -5,10 +5,10 @@ import re
 # URL Format to access a specific stash tab information
 STASH_TAB_URL = "https://www.pathofexile.com/character-window/get-stash-items?league={}&tabIndex={}&accountName={}"
 
-# the api blocks the requests user agent so we need to fake it
-# a old IE user agent is used for the lulz
+# due to a different tool DDoS-ing GGG we need to identify ourselves
+# https://www.pathofexile.com/forum/view-thread/3019033/page/1#p23790007
 HEADERS = {
-    "User-Agent": "Mozilla/4.0 (compatible; MSIE 5.0; Windows 98; DigExt)",
+    "User-Agent": "https://github.com/peeteer1245/poe_qolV2",
 }
 
 
