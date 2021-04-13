@@ -1,3 +1,8 @@
+# DO NOT USE THIS
+Recent changes to the Terms of Service forbid the usage of the API that is used here.  
+Everything still works but it may get you banned.  
+This project is discontinued and abandoned.
+
 ## Update:
 The code owner (Path of Matth) has decided to release the source code at this point. We are happy to do this so that everyone can feel better about using the tool, and welcome kind contributions. This is a scruffy code. We want to thank @macr0s for starting the project, even though more than half of it has changed. A history of the code up to this point is in the branch `archive` for those interested.
 
